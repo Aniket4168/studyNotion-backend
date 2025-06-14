@@ -16,11 +16,11 @@ exports.capturePayment = async (req, res) => {
         //validation
         //valid course ID
             if(!courseId) {
-                return res.json({
+                return res.json({ 
                     success:false,
                     message:"Please provide valid course ID",
                 });
-            }  // khkh
+            } 
 
         //valid course details
             let course;
