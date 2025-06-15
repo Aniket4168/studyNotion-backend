@@ -66,7 +66,7 @@ exports.categoryPageDetails = async (req, res) => {
         //get courses for spicified category id
          const selectedCategory = await Category.findById(categoryId)
                                     .populate("courses")
-                                    .exec();
+                                    .exec(); 
 
         //validation
             if(!selectedCategory) {
