@@ -5,10 +5,16 @@ const router = express.Router()
 // Import the Controllers
 
 // Course Controllers Import
-const {
+const { 
   createCourse,
-  getAllCourses,
+  showAllCourses,
   getCourseDetails,
+  getInstructorCourses,
+  editCourse,
+  getFullCourseDetails,
+  deleteCourse,
+  searchCourse,
+  markLectureAsComplete,
   
 } = require("../controllers/Course")
 
@@ -18,6 +24,7 @@ const {
   showAllCategories,
   createCategory,
   categoryPageDetails,
+  addCourseToCategory,
 } = require("../controllers/Category")
 
 // Sections Controllers Import
@@ -39,7 +46,7 @@ const {
   createRating,
   getAverageRating,
   getAllRating,
-} = require("../controllers/RatingAndReviews")
+} = require("../controllers/RatingAndReview")
 
 //demo
 const { isDemo } = require("../middlewares/demo");
@@ -66,21 +73,21 @@ router.post("/deleteSubSection", auth, isInstructor, deleteSubSection)
 // Add a Sub Section to a Section
 router.post("/addSubSection", auth, isInstructor, createSubSection)
 // Get all Registered Courses
-router.get("/getAllCourses", getAllCourses)
+router.get("/getAllCourses", showAllCourses)
 // Get Details for a Specific Courses
 router.post("/getCourseDetails", getCourseDetails)
 // Edit a Course
-//router.post("/editCourse", auth, isInstructor,isDemo, editCourse)
+router.post("/editCourse", auth, isInstructor,isDemo, editCourse)
 // Get all Courses of a Specific Instructor
-//router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses)
+router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses)
 //Get full course details
-//router.post("/getFullCourseDetails", auth, getFullCourseDetails)
+router.post("/getFullCourseDetails", auth, getFullCourseDetails)
 // Delete a Course
-//router.delete("/deleteCourse",auth,isDemo, deleteCourse)
+router.delete("/deleteCourse",auth,isDemo, deleteCourse)
 // Search Courses
-//router.post("/searchCourse", searchCourse);
+router.post("/searchCourse", searchCourse);
 //mark lecture as complete
-//router.post("/updateCourseProgress", auth, isStudent, markLectureAsComplete);
+router.post("/updateCourseProgress", auth, isStudent, markLectureAsComplete);
 
 
 
@@ -92,7 +99,7 @@ router.post("/getCourseDetails", getCourseDetails)
 router.post("/createCategory", auth, isAdmin, createCategory)
 router.get("/showAllCategories", showAllCategories)
 router.post("/getCategoryPageDetails", categoryPageDetails)
-//router.post("/addCourseToCategory", auth, isInstructor, addCourseToCategory);
+router.post("/addCourseToCategory", auth, isInstructor, addCourseToCategory);
 
 // ********************************************************************************************************
 //                                      Rating and Review

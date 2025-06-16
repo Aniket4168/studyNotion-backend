@@ -6,6 +6,7 @@ const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const mailSender = require("../utils/mailSender");
+const { passwordUpdated } = require("../mail/templates/passwordUpdate");
 
 
 
@@ -48,6 +49,9 @@ exports.sendOTP = async (req, res) => {
             });
             result = await OTP.findOne({otp:otp});
         }
+
+        console.log("unique otp made successfully", otp);
+        
 
         // this is a bad code above for otp generation, in actual companies, 
         // we will use otp generation services, where they ensure to give the unique otp everytime
@@ -129,7 +133,7 @@ exports.signUp = async (req, res) => {
                 success:false,
                 message:"otp not found"
             });
-        } else if(otp !== recentOtp.otp) {
+        } else if(otp !== recentOtp[0].otp) {
             return res.status(400).json({
                 success:false,
                 message:"Invalid OTP",
@@ -138,6 +142,9 @@ exports.signUp = async (req, res) => {
         
         //hash the password
         const hashedPass = await bcrypt.hash(password, 10);
+
+        let approved = "";
+		approved === "Instructor" ? (approved = false) : (approved = true);
 
         //create entry in db
 
@@ -157,10 +164,11 @@ exports.signUp = async (req, res) => {
             contactNumber, 
             password:hashedPass,
             accountType,
+            approved:approved,
             additionalDetails: profileDetails._id,
             image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
 
-        })
+        });
 
         //return response
         return res.status(200).json({
@@ -257,10 +265,34 @@ exports.changePassword = async (req, res) => {
     //return response
 
     try{
+        // Get user data from req.user
+		const userDetails = await User.findById(req.user.id);
+
         //get data from req body (old pass, new pass, confirm new pass)
         const { oldPassword, newPassword, confirmNwePassword} = req.body;
         const {email } = req.user.email;
+
         //validate
+        // Validate old password
+		const isPasswordMatch = await bcrypt.compare(
+			oldPassword,
+			userDetails.password
+		);
+		if(oldPassword === newPassword){
+			return res.status(400).json({
+				success: false,
+				message: "New Password cannot be same as Old Password",
+			});
+		}
+		
+		if (!isPasswordMatch) {
+			// If old password does not match, return a 401 (Unauthorized) error
+			return res
+				.status(401)
+				.json({ success: false, message: "The password is incorrect" });
+		}
+
+
         if(newPassword !== confirmNwePassword) {
             return res.status(401).json({
                 success:false,
@@ -291,14 +323,16 @@ exports.changePassword = async (req, res) => {
         }
         
         //send mail- pass updated
-        await mailSender(email, "Password change", 
-                `<h2> Your password is changes successfully, please login again</h2>`
+        await mailSender(email, "StudyNotion - Password Updated", 
+                passwordUpdated(email, updatedPass.firstName),
         )
         //return response
         res.status(200).json({
             success:true,
-            message:"Password changes successfully"
+            message:"Password changed successfully"
         })
+
+
     } catch(error) {
         console.log(error);
         return res.status(500).json({

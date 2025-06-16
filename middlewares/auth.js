@@ -50,7 +50,7 @@ exports.isStudent = async (req, res, next) => {
         //ya to token ke payload me hamne role mention kiya hai, wha se karlo
         // ya db se data fetch karke wha se verify karlo
 
-        if(req.user.accountDetails !== "Student") {
+        if(req.user.accountType !== "Student") {
             return res.status(401).json({
                 success:false,
                 message:"this is a protected route for studnent only"
@@ -75,7 +75,7 @@ exports.isInstructor = async (req, res, next) => {
         //ya to token ke payload me hamne role mention kiya hai, wha se karlo
         // ya db se data fetch karke wha se verify karlo
 
-        if(req.user.accountDetails !== "Instructor") {
+        if(req.user.accountType !== "Instructor") {
             return res.status(401).json({
                 success:false,
                 message:"this is a protected route for instructor only"
@@ -100,7 +100,9 @@ exports.isAdmin = async (req, res, next) => {
         //ya to token ke payload me hamne role mention kiya hai, wha se karlo
         // ya db se data fetch karke wha se verify karlo
 
-        if(req.user.accountDetails !== "Admin") {
+        console.log();
+        
+        if(req.user.accountType !== "Admin") {
             return res.status(401).json({
                 success:false,
                 message:"this is a protected route for Admin only"

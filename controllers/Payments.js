@@ -5,6 +5,9 @@ const mailSender = require("../utils/mailSender");
 const {courseEnrollmentEmail} = require("../mail/templates/courseEnrollmentEmail");
 const { mongoose } = require("mongoose");
 const { response } = require("express");
+const {paymentSuccess} = require("../mail/templates/paymentSuccess");
+const crypto = require("crypto");
+const CourseProgress = require("../models/CourseProgress");
 
 //capture the payment and initiate the razorpay order
 exports.capturePayment = async (req, res) => {

@@ -1,5 +1,5 @@
-const nodeMiailer = require("nodemailer");
-require("dotenv");
+const nodeMailer = require("nodemailer");
+require("dotenv").config();
 
 
 //this is the function to send mail
@@ -7,7 +7,7 @@ require("dotenv");
 //hence it is in the utility folder
 const mailSender = async (email, title, body) => {
     try{
-        let transporter = nodeMiailer.createTransport({
+        let transporter = nodeMailer.createTransport({
             host: process.env.MAIL_HOST,
             auth:{
                 user: process.env.MAIL_USER,

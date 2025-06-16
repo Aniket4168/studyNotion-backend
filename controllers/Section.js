@@ -13,9 +13,11 @@ exports.createSection = async (req, res) => {
                     message:"All fields are required",
                 });
             }
-
+            console.log("validation done");
+            
         //create section
             const newSection = await Section.create({sectionName});
+            console.log("create done");
 
         //update section object id in course schema
             const updatedCourseDetails = await Course.findByIdAndUpdate( courseId, 
@@ -29,7 +31,11 @@ exports.createSection = async (req, res) => {
                                                                 path:"courseContent",
                                                                 populate:{path:"subSection"}
                                                             }).exec();
+
+                                                            
+
         //return response
+         console.log(" done");
             return res.status(200).json({
                 success:true,
                 message:"Section created successfully",
@@ -39,7 +45,8 @@ exports.createSection = async (req, res) => {
     } catch(error) {
         return res.status(500).json({
             success:false,
-            message:"Unable to create section, please try again later"
+            message:"Unable to create section, please try again later",
+            error:error.message,
         });
     }
 }
@@ -47,7 +54,7 @@ exports.createSection = async (req, res) => {
 exports.updateSection = async (req, res) => {
     try{
         //data input and validation
-            const {sectionName, sectionId} = req.body;
+            const {sectionName, sectionId, courseId} = req.body;
 
             if(!sectionName || !sectionId) {
                 return res.status(400).json({
@@ -59,10 +66,13 @@ exports.updateSection = async (req, res) => {
         //update data
             const section = await Section.findByIdAndUpdate(sectionId, {sectionName}, {new:true});
         
+        	const updatedCourse = await Course.findById(courseId).populate({ path: "courseContent", populate: { path: "subSection" } }).exec();
+
         //return response
             return res.status(200).json({
                 success:true,
                 message:"Section updated successfully",
+                updatedCourse
             });
 
 
@@ -78,13 +88,14 @@ exports.updateSection = async (req, res) => {
 exports.deleteSection = async (req, res) => {
     try{
         //get id assuming that we are sending id in params
-            const {sectionId} = req.params;
+            const {sectionId, courseId} = req.params;
 
         // find by id and delete
             await Section.findByIdAndDelete(sectionId);
 
         //TODO: WE NEED TO MAKE SURE TO UPDATE THE COURSES SCHEMA ALSO
-        
+        	const updatedCourse = await Course.findById(courseId).populate({ path: "courseContent", populate: { path: "subSection" } }).exec();
+
 
         //response
             return res.status(200).json({
