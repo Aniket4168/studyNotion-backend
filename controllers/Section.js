@@ -88,15 +88,22 @@ exports.updateSection = async (req, res) => {
 exports.deleteSection = async (req, res) => {
     try{
         //get id assuming that we are sending id in params
-            const {sectionId, courseId} = req.params;
+            const {sectionId, courseId} = req.body;
 
         // find by id and delete
             await Section.findByIdAndDelete(sectionId);
 
         //TODO: WE NEED TO MAKE SURE TO UPDATE THE COURSES SCHEMA ALSO
-        	const updatedCourse = await Course.findById(courseId).populate({ path: "courseContent", populate: { path: "subSection" } }).exec();
+        	const updatedCourse = await Course.findByIdAndUpdate(courseId, {
+                                    $pull:{courseContent:sectionId}})
+                                    .populate(
+                                        { path: "courseContent", 
+                                            populate: { path: "subSection" } })
+                                    .exec();
 
 
+            console.log(updatedCourse);
+            
         //response
             return res.status(200).json({
                 success:true, 

@@ -136,13 +136,13 @@ exports.addCourseToCategory = async (req, res) => {
 				message: "Course not found",
 			});
 		}
-		if(category.courses.includes(courseId)){
+		if(category.course.includes(courseId)){
 			return res.status(200).json({
 				success: true,
 				message: "Course already exists in the category",
 			});
 		}
-		category.courses.push(courseId);
+		category.course.push(courseId);
 		await category.save();
 		return res.status(200).json({
 			success: true,

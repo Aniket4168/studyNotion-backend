@@ -287,7 +287,7 @@ exports.editCourse = async (req, res) => {
 
 
   //get full course details
-  exports.getFullCourseDetails = async (req, res) => {
+exports.getFullCourseDetails = async (req, res) => {
 	try {
 	  const { courseId } = req.body
 	  const userId = req.user.id
@@ -353,12 +353,12 @@ exports.editCourse = async (req, res) => {
 		},
 	  })
 	} catch (error) {
-	  return res.status(500).json({
-		success: false,
-		message: error.message,
-	  })
+		return res.status(500).json({
+			success: false,
+			message: error.message,
+		})
 	}
-  }
+}
 
 
 //Delete Course
